@@ -1,7 +1,10 @@
 /** Motor financeiro puro: sem DOM, sem servidor e sem arredondamento intermediário. */
 (function (root) {
   'use strict';
-  const HECTARES_PER_ALQUEIRE = 2.42;
+  const UNIT_OPTIONS = Object.freeze({
+    paulista: Object.freeze({label:'Alqueire paulista', adjective:'alqueires paulistas', hectares:2.42}),
+    mineiro: Object.freeze({label:'Alqueire mineiro', adjective:'alqueires mineiros', hectares:4.84})
+  });
   const PERIODS = [6, 10, 12];
   const brMoney = new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const brNum = new Intl.NumberFormat('pt-BR', { minimumFractionDigits: 0, maximumFractionDigits: 2 });
@@ -20,7 +23,10 @@
     return Number.isFinite(value) ? value : NaN;
   }
 
-  function compute(raw, years) {
+  function compute(raw, years, unit='paulista') {
+    const selectedUnit = UNIT_OPTIONS[unit];
+    if (!selectedUnit) return {ok:false,errors:{global:'Selecione um padrão de medida válido.'}};
+    const HECTARES_PER_ALQUEIRE = selectedUnit.hectares;
     const y = Number(years);
     const errors = {};
     const fields = {totalArea:'Área total', priceAlq:'Valor por alqueire', leasedArea:'Área arrendada', yield:'Produtividade', atr:'Índice ATR', atrPrice:'Preço do ATR'};
@@ -55,7 +61,7 @@
       {label:'Base', multiplier:1},
       {label:'Otimista', multiplier:1.1}
     ].map(s => ({...s, atrPrice: v.atrPrice*s.multiplier, annual: annual*s.multiplier, roi: roi*s.multiplier}));
-    const result = {ok:true, years:y, values:v, hectares:v.totalArea*HECTARES_PER_ALQUEIRE, priceHa:v.priceAlq/HECTARES_PER_ALQUEIRE,
+    const result = {ok:true, years:y, unitKey:unit, unitLabel:selectedUnit.label, hectaresPerAlqueire:HECTARES_PER_ALQUEIRE, values:v, hectares:v.totalArea*HECTARES_PER_ALQUEIRE, priceHa:v.priceAlq/HECTARES_PER_ALQUEIRE,
       patrimony, occupancy, remainingAlq, remainingHa:remainingAlq*HECTARES_PER_ALQUEIRE,
       leasedHa:v.leasedArea*HECTARES_PER_ALQUEIRE, leasedPatrimony:v.leasedArea*v.priceAlq,
       revenueTon, revenueAlq, tonsYear, atrYear, annual, monthly, daily, roi,
@@ -66,5 +72,5 @@
     return result;
   }
 
-  root.KmzCalc = {compute, parseNumber, money:n=>brMoney.format(n), number:n=>brNum.format(n), percent:n=>brPercent.format(n)+'%', atrPrice:n=>'R$ '+brPrice.format(n), HECTARES_PER_ALQUEIRE};
+  root.KmzCalc = {compute, parseNumber, money:n=>brMoney.format(n), number:n=>brNum.format(n), percent:n=>brPercent.format(n)+'%', atrPrice:n=>'R$ '+brPrice.format(n), UNIT_OPTIONS};
 })(typeof window !== 'undefined' ? window : globalThis);

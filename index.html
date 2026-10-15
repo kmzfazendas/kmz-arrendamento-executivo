@@ -17,27 +17,29 @@
           <p>Viabilidade, ocupação territorial e retorno sobre o patrimônio</p>
         </div>
       </div>
-      <div class="masthead-side"><span class="pill">SIMULADOR EXECUTIVO</span><span class="head-note">Valores nominais · Alqueire paulista</span></div>
+      <div class="masthead-side"><span class="pill">SIMULADOR EXECUTIVO</span><span class="head-note">Valores nominais · <span id="header-unit">Alqueire paulista</span></span></div>
     </div>
   </header>
 
   <main class="shell workspace">
     <section class="card identity" aria-label="Identificação">
       <div class="identity-field"><label for="property">Nome da propriedade <span class="optional">(opcional)</span></label>
-        <input id="property" type="text" maxlength="140" placeholder="Ex.: Fazenda Santa Inês — Polo Sucroenergético" value="Fazenda Santa Inês — Polo Sucroenergético" autocomplete="off"></div>
-      <div class="unit-note"><strong>PADRÃO DE MEDIDA</strong><span>1 alqueire paulista = 2,42 hectares</span></div>
+        <input id="property" type="text" maxlength="140" placeholder="Ex.: Fazenda Santa Inês — Polo Sucroenergético" autocomplete="off"></div>
+      <div class="unit-note"><label for="unit">PADRÃO DE MEDIDA</label>
+        <select id="unit" aria-describedby="unit-help"><option value="paulista">Alqueire paulista (2,42 ha)</option><option value="mineiro">Alqueire mineiro (4,84 ha)</option></select>
+        <span id="unit-help">1 alqueire paulista = 2,42 hectares</span></div>
     </section>
 
-    <div id="demo-note" class="demo-note">Dados iniciais ilustrativos extraídos do laudo de referência. Substitua-os pelos valores da propriedade analisada.</div>
+    <div id="demo-note" class="demo-note">Preencha os dados na unidade escolhida (alq, R$/alq e t/alq). ATR inicial: 121,97 kg/t, editável.</div>
     <div id="global-error" class="error-panel" role="alert" hidden></div>
 
     <div class="inputs-grid">
       <section class="card input-card">
         <h2><span class="section-number">01</span> Patrimônio e território</h2>
         <div class="field-list">
-          <div class="field"><label for="totalArea">Área total da fazenda <small>alqueires paulistas</small></label><div class="input-wrap"><input id="totalArea" type="text" inputmode="decimal" value="100" aria-describedby="totalAreaError"><span>alq</span></div><small class="field-error" id="totalAreaError"></small></div>
-          <div class="field"><label for="priceAlq">Valor de mercado por alqueire <small>R$ por alqueire</small></label><div class="input-wrap"><span>R$</span><input id="priceAlq" type="text" inputmode="decimal" value="180.000,00" aria-describedby="priceAlqError"></div><small class="field-error" id="priceAlqError"></small></div>
-          <div class="field"><label for="leasedArea">Área arrendada para cana <small>alqueires paulistas</small></label><div class="input-wrap highlighted"><input id="leasedArea" type="text" inputmode="decimal" value="80" aria-describedby="leasedAreaError"><span>alq</span></div><small class="field-error" id="leasedAreaError"></small></div>
+          <div class="field"><label for="totalArea">Área total da fazenda <small><span data-unit-adjective>alqueires paulistas</span></small></label><div class="input-wrap"><input id="totalArea" type="text" inputmode="decimal" placeholder="Ex.: 100" aria-describedby="totalAreaError"><span>alq</span></div><small class="field-error" id="totalAreaError"></small></div>
+          <div class="field"><label for="priceAlq">Valor de mercado por alqueire <small>R$ por alqueire</small></label><div class="input-wrap"><span>R$</span><input id="priceAlq" type="text" inputmode="decimal" placeholder="Ex.: 180.000,00" aria-describedby="priceAlqError"></div><small class="field-error" id="priceAlqError"></small></div>
+          <div class="field"><label for="leasedArea">Área arrendada para cana <small><span data-unit-adjective>alqueires paulistas</span></small></label><div class="input-wrap highlighted"><input id="leasedArea" type="text" inputmode="decimal" placeholder="Ex.: 80" aria-describedby="leasedAreaError"><span>alq</span></div><small class="field-error" id="leasedAreaError"></small></div>
         </div>
         <div class="micro-grid"><div><span>Área total</span><strong id="hectares">—</strong></div><div><span>Área remanescente</span><strong id="remaining">—</strong></div><div><span>Patrimônio arrendado</span><strong id="leasedPatrimony">—</strong></div><div><span>Valor por hectare</span><strong id="priceHa">—</strong></div></div>
       </section>
@@ -51,9 +53,9 @@
 
       <section class="card input-card"><h2><span class="section-number">03</span> Produção e ATR</h2>
         <div class="field-list">
-          <div class="field"><label for="yield">Produtividade <small>toneladas por alqueire/ano</small></label><div class="input-wrap"><input id="yield" type="text" inputmode="decimal" value="55" aria-describedby="yieldError"><span>t/alq/ano</span></div><small class="field-error" id="yieldError"></small></div>
-          <div class="field"><label for="atr">Índice ATR <small>kg de ATR por tonelada de cana</small></label><div class="input-wrap"><input id="atr" type="text" inputmode="decimal" value="121,19" aria-describedby="atrError"><span>kg/t</span></div><small class="field-error" id="atrError"></small></div>
-          <div class="field"><label for="atrPrice">Preço do ATR <small>R$ por kg de ATR</small></label><div class="input-wrap highlighted"><span>R$</span><input id="atrPrice" type="text" inputmode="decimal" value="1,2000" aria-describedby="atrPriceError"><span>/kg</span></div><small class="field-error" id="atrPriceError"></small></div>
+          <div class="field"><label for="yield">Produtividade <small>toneladas por alqueire/ano</small></label><div class="input-wrap"><input id="yield" type="text" inputmode="decimal" placeholder="Ex.: 55" aria-describedby="yieldError"><span>t/alq/ano</span></div><small class="field-error" id="yieldError"></small></div>
+          <div class="field"><label for="atr">Índice ATR <small>kg de ATR por tonelada de cana</small></label><div class="input-wrap"><input id="atr" type="text" inputmode="decimal" value="121,97" aria-describedby="atrError"><span>kg/t</span></div><small class="field-error" id="atrError"></small></div>
+          <div class="field"><label for="atrPrice">Preço do ATR <small>R$ por kg de ATR</small></label><div class="input-wrap highlighted"><span>R$</span><input id="atrPrice" type="text" inputmode="decimal" placeholder="Ex.: 1,2000" aria-describedby="atrPriceError"><span>/kg</span></div><small class="field-error" id="atrPriceError"></small></div>
         </div>
         <div class="micro-grid"><div><span>Receita por tonelada</span><strong id="revenueTon">—</strong></div><div><span>Receita por alqueire/ano</span><strong id="revenueAlq">—</strong></div><div><span>Volume de cana/ano</span><strong id="tonsYear">—</strong></div><div><span>ATR recuperável/ano</span><strong id="atrYear">—</strong></div></div>
       </section>
@@ -79,7 +81,7 @@
         <div class="method"><strong>Metodologia</strong><p>Receita anual = área arrendada × produtividade × ATR (kg/t) × preço ATR (R$/kg). ROI bruto = receita anual ÷ patrimônio total × 100.</p></div>
       </section>
     </div>
-    <div class="actions"><p id="logo-status" role="status">Preparando identidade visual…</p><button id="generate-pdf" type="button" disabled>GERAR PDF <span aria-hidden="true">↗</span></button></div>
+    <div class="actions"><p id="logo-status" role="status">Informe os dados para gerar o PDF.</p><div class="action-buttons"><button id="reset-data" type="button" class="reset-button" aria-label="Limpar dados e restaurar valores padrão">LIMPAR DADOS</button><button id="generate-pdf" type="button" disabled>GERAR PDF <span aria-hidden="true">↗</span></button></div></div>
   </main>
   <footer class="footer"><div class="shell footer-row"><span>KMZ FAZENDAS · Negócios Rurais e Inteligência Patrimonial</span><span>Simulação econômica indicativa · Não constitui laudo de avaliação</span></div></footer>
 <!-- Este template NÃO aparece na interface. É clonado e preenchido ao clicar em GERAR PDF. -->
@@ -92,7 +94,7 @@
     </header>
 
     <div class="pdf-inner">
-      <section class="pdf-property"><div><small>IDENTIFICAÇÃO DA PROPRIEDADE</small><strong data-k="property"></strong></div><div><small>PADRÃO REGIONAL</small><strong>Alqueire paulista · 2,42 hectares</strong></div></section>
+      <section class="pdf-property"><div><small>IDENTIFICAÇÃO DA PROPRIEDADE</small><strong data-k="property"></strong></div><div><small>PADRÃO REGIONAL</small><strong data-k="unit">Alqueire paulista · 2,42 hectares</strong></div></section>
 
       <div class="pdf-input-panels">
         <section class="pdf-panel"><h2><em>01</em> PATRIMÔNIO</h2>

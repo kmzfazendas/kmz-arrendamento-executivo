@@ -10,3 +10,17 @@
 .brand-img{width:220px;height:220px;left:-19px;top:-50px}
 @media(max-width:680px){.brand-img{width:117px;height:117px;left:-10px;top:-27px}}
 @media(max-width:375px){.brand-img{width:82px;height:82px;left:-7px;top:-18px}}
+
+/* Versão 1.1: seletor regional, exemplos discretos e ação de limpeza. */
+.identity .unit-note{min-width:284px;gap:6px}
+.identity .unit-note label{font-size:10px;letter-spacing:.5px;color:var(--green);font-weight:800}
+.identity .unit-note select{display:block;width:100%;max-width:330px;min-height:39px;padding:8px 33px 8px 10px;border:1px solid #d8e5da;border-radius:7px;color:var(--forest);background:#f9fbf9;font-size:12px;font-weight:700;cursor:pointer}
+.identity .unit-note select:focus-visible{outline:2px solid #8dbe9a;outline-offset:2px}
+.identity .unit-note>span{font-size:10px;color:#748678;font-weight:500}
+.identity input::placeholder,.input-wrap input::placeholder{color:#9ca9a0;opacity:1;font-size:13px;font-weight:400}
+.action-buttons{display:flex;align-items:center;gap:11px;flex-shrink:0}
+.actions .reset-button{background:transparent;border:1px solid #c8d8cb;color:#356249;box-shadow:none;padding:15px 19px;font-size:11px}
+.actions .reset-button:hover{background:#edf5ef;color:#17452f}
+.actions .reset-button:focus-visible,.actions button:focus-visible{outline:2px solid #92bda0;outline-offset:3px}
+@media(max-width:680px){.identity .unit-note{min-width:0}.identity .unit-note select{max-width:none}.action-buttons{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:9px}.actions .reset-button{padding:14px 6px}.actions #generate-pdf{padding:14px 6px}}
+@media(max-width:375px){.action-buttons{grid-template-columns:1fr}.actions .reset-button,.actions #generate-pdf{width:100%}}

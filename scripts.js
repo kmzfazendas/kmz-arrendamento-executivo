@@ -7,6 +7,7 @@
   const fmt=(k,n)=>k==='money'?C.money(n):k==='pct'?C.percent(n):C.number(n);
   const set=(id,value)=>{byId(id).textContent=value;};
   const safe = s=>String(s==null?'':s);
+  const DEFAULT_ATR = '121,97';
 
   function ring(pct){
     const p=Math.max(0,Math.min(100,pct));
@@ -32,10 +33,18 @@
     return wrap;
   }
 
+  function updateUnitLabels(){
+    const selected = C.UNIT_OPTIONS[byId('unit').value];
+    byId('unit-help').textContent='1 '+selected.label.toLowerCase()+' = '+C.number(selected.hectares)+' hectares';
+    byId('header-unit').textContent=selected.label;
+    document.querySelectorAll('[data-unit-adjective]').forEach(node=>node.textContent=selected.adjective);
+  }
+
   function showInvalid(errors){
     fields.forEach(key=>{
       const node=byId(key), parent=node.closest('.field');
-      const error=safe(errors[key]||'');
+      // Campos em branco não são marcados como inválidos antes da digitação.
+      const error=node.value.trim()?safe(errors[key]||''):'';
       parent.classList.toggle('invalid',!!error);node.setAttribute('aria-invalid',error?'true':'false');
       byId(key+'Error').textContent=error;
     });
@@ -45,14 +54,18 @@
 
   function render(){
     const raw={};fields.forEach(key=>raw[key]=byId(key).value);
-    const r=C.compute(raw,byId('years').value);
+    updateUnitLabels();
+    const r=C.compute(raw,byId('years').value,byId('unit').value);
     state.result=r.ok?r:null;
     showInvalid(r.errors||{});
     const btn=byId('generate-pdf');btn.disabled=!r.ok||!state.logo;
+    byId('logo-status').textContent=!state.logo?'Preparando logomarca para o relatório…':r.ok?'Relatório A4 pronto para gerar.':'Preencha os dados da propriedade para liberar o PDF.';
     if(!r.ok){
       ['hectares','remaining','leasedPatrimony','priceHa','areaLeased','areaLeasedHa','areaRemaining','areaRemainingHa','revenueTon','revenueAlq','tonsYear','atrYear','patrimony','annual','monthly','roi','cumulative','cumulativePct','cumulativeTons'].forEach(id=>set(id,'—'));
       set('payback','Payback bruto simples: —');set('daily','Receita diária equivalente: —');
-      byId('yearChart').replaceChildren();byId('scenarios').replaceChildren();byId('donut').innerHTML='';return;
+      byId('yearChart').replaceChildren();byId('scenarios').replaceChildren();
+      byId('donut').innerHTML='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" aria-label="Aguardando dados de área"><circle cx="60" cy="60" r="48" fill="none" stroke="#e3ece3" stroke-width="13"/><text x="60" y="60" text-anchor="middle" font-size="21" fill="#9ba99e">—</text><text x="60" y="73" text-anchor="middle" font-size="6" fill="#91a297">AGUARDANDO DADOS</text></svg>';
+      return;
     }
     set('hectares',fmt('num',r.hectares)+' ha');set('remaining',C.number(r.remainingAlq)+' alq · '+C.number(r.remainingHa)+' ha');
     set('leasedPatrimony',C.money(r.leasedPatrimony));set('priceHa',C.money(r.priceHa)+'/ha');
@@ -83,6 +96,7 @@
     const wrapper=document.createElement('div');wrapper.append(byId('pdf-template').content.cloneNode(true));
     const property=byId('property').value.trim()||'Propriedade rural — não identificada';
     const data={property,date:new Intl.DateTimeFormat('pt-BR',{dateStyle:'short'}).format(new Date()),
+      unit:r.unitLabel+' · '+C.number(r.hectaresPerAlqueire)+' hectares',
       totalArea:C.number(r.values.totalArea)+' alq · '+C.number(r.hectares)+' ha',priceAlq:C.money(r.values.priceAlq),
       leasedArea:C.number(r.values.leasedArea)+' alq',hectares:C.number(r.hectares)+' ha',leasedPatrimony:C.money(r.leasedPatrimony),
       areaLeased:C.number(r.values.leasedArea)+' alq',areaRemaining:C.number(r.remainingAlq)+' alq',remainingHa:C.number(r.remainingHa)+' ha',
@@ -130,15 +144,24 @@
 
   function logoReady(src){
     if(!src||typeof src!=='string')return logoError();
-    const img=new Image();img.onload=function(){state.logo=src;byId('brand-logo').src=src;byId('logo-status').textContent='Relatório A4 pronto. No iPhone, use a opção Imprimir / Salvar PDF na nova aba.';render();};
+    const img=new Image();img.onload=function(){state.logo=src;byId('brand-logo').src=src;render();};
     img.onerror=logoError;img.src=src;
   }
   function logoError(err){
     const detail=err&&err.message?(' Detalhe: '+String(err.message).slice(0,140)):'';
-    byId('logo-status').textContent='Falha ao carregar a logomarca. Confira o arquivo LogoData.html.'+detail;
+    byId('logo-status').textContent='Falha ao carregar a logomarca. Confira logo-kmz.png.'+detail;
   }
   fields.forEach(key=>byId(key).addEventListener('input',render));
   byId('years').addEventListener('change',render);
+  byId('unit').addEventListener('change',render);
+  byId('reset-data').addEventListener('click',()=>{
+    fields.forEach(id=>byId(id).value=id==='atr'?DEFAULT_ATR:'');
+    byId('property').value='';
+    byId('unit').value='paulista';
+    byId('years').value='6';
+    render();
+    byId('property').focus();
+  });
   byId('generate-pdf').addEventListener('click',printReport);
   // Carrega o PNG original publicado com o site, sem autenticação ou servidor.
   const logoUrl = new URL('./logo-kmz.png', window.location.href).href;
